@@ -1,9 +1,6 @@
 import re
-import os
 import glob
 import platform
-from xml.etree import ElementTree as ET
-from subprocess import Popen, PIPE
 
 
 def get_os_name():
@@ -44,42 +41,3 @@ def get_debugger(os: str):
                 if pattern.match(candidate_debugger) is not None:
                     debugger = candidate_debugger.split('/')[-1]
                     return debugger
-
-
-def change_project_framework(project_dir: os.PathLike, dotnet_sdk_version: str):
-    project_file = glob.glob(f'{project_dir}/*.csproj')[0]
-    tree = ET.parse(project_file)
-    root = tree.getroot()
-    if dotnet_sdk_version[0] == '3':
-        framework = 'netcoreapp' + dotnet_sdk_version[0][:3]
-    else:
-        framework = 'net' + dotnet_sdk_version[0][:3]
-
-    lang_version_element = ET.Element("LangVersion")
-    lang_version_element.text = "latest"
-
-    root.find('PropertyGroup').append(lang_version_element)
-    root.find('PropertyGroup').find('TargetFramework').text = framework
-    tree.write(project_file)
-
-
-def run_command_sync(command, stdin=None, stdout=PIPE, stderr=PIPE, cwd=None, **kwargs)->tuple:
-    print(command)
-    args = command.split(' ')
-    try:
-        p = Popen(args, stdin=stdin,
-            stdout=stdout, stderr=stderr, cwd=cwd, **kwargs)
-        outs, errs = p.communicate()
-        outs = outs.decode()
-        errs = errs.decode()
-    except Exception as e:
-        outs, errs = '', e
-    return outs, errs
-    
-
-def run_command_async(command: str, stdin=None, stdout=None, stderr=None, cwd=None, **kwargs)->Popen:
-    print(command)
-    args = command.split(' ')
-    p = Popen(args, stdin=stdin,
-        stdout=stdout, stderr=stderr, cwd=cwd, **kwargs)
-    return p

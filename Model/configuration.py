@@ -1,10 +1,15 @@
 class DiagnosticsConfiguration:
-    diagnostics_root = ''
-    diagnostics_version = ''
+    root = ''
+    version = ''
+    feed = ''
 
 class TestConfiguration:
     test_bed = ''
-    runtime_root = ''
-    runtime_commit = ''
-    genawaredemo_root = ''
-    genawaredemo_commit = ''
+
+class RuntimeConfiguration:
+    root = ''
+    commit = ''
+
+class GenAwareDemoConfiguration:
+    root = ''
+    commit = ''
