@@ -1,6 +1,7 @@
 import re
 import glob
 import platform
+from subprocess import Popen
 
 
 def get_os_name():
@@ -41,3 +42,20 @@ def get_debugger(os: str):
                 if pattern.match(candidate_debugger) is not None:
                     debugger = candidate_debugger.split('/')[-1]
                     return debugger
+
+
+def run_command_sync(command: str, **kwargs)->tuple:
+    args = command.split(' ')
+    try:
+        p = Popen(args, **kwargs)
+        outs, errs = p.communicate()
+        if isinstance(outs, bytes): outs = outs.decode()
+        if isinstance(errs, bytes): errs = errs.decode()
+    except Exception as e:
+        outs, errs = '', e
+    return outs, errs
+    
+
+def run_command_async(command: str, **kwargs)->Popen:
+    args = command.split(' ')
+    return Popen(args, **kwargs)

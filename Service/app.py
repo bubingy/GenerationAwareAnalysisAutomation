@@ -4,9 +4,10 @@ import glob
 import shutil
 import zipfile
 from urllib import request
-from subprocess import Popen, PIPE
+from subprocess import PIPE
 
 from Model.configuration import *
+from Service.utils import *
 
 class AppService:
     command = ''
@@ -93,25 +94,23 @@ class AppService:
 
         os.environ['COMPlus_GCGenAnalysisGen'] = '1'
         os.environ['COMPlus_GCGenAnalysisBytes'] = '16E360'
-        cls.command = f'{corerun} {genawaredemo}'.split(' ')
+        cls.command = f'{corerun} {genawaredemo}'
 
 
     @classmethod
     def run_app(cls, test_result_root: str, scenario_env: list):
         cls.__init_command()
-        if len(cls.command) < 2: Exception(f'invalid command: {cls.command}')
+        
         tmp_file_path = os.path.join(test_result_root, 'tmp.txt')
         if os.path.exists(tmp_file_path): os.remove(tmp_file_path)
 
         tmp_fp = open(tmp_file_path, 'w+')
-        
-        p = Popen(cls.command, stdin=PIPE, stdout=tmp_fp, cwd=test_result_root, env=scenario_env)
+        p = run_command_async(cls.command, stdin=PIPE, stdout=tmp_fp, cwd=test_result_root, env=scenario_env)
         while True:
             with open(tmp_file_path, 'r') as tmp_reader:
                 if 'My process id is' in tmp_reader.read(): 
                     break
             time.sleep(1)
-
         p.stdin.write(b'123\n')
         p.communicate()
         
@@ -122,8 +121,6 @@ class AppService:
         test_result_root = os.path.join(TestConfiguration.test_bed, 'TraceOnly')
         if not os.path.exists(test_result_root): os.makedirs(test_result_root)
         scenario_env = os.environ.copy()
-        scenario_env['COMPlus_GCGenAnalysisDump'] = '0'
-        scenario_env['COMPlus_GCGenAnalysisTrace'] = '1'
 
         cls.run_app(test_result_root, scenario_env)
         return test_result_root

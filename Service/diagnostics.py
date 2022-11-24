@@ -1,40 +1,52 @@
 import os
 import glob
-from subprocess import Popen, PIPE
+from subprocess import PIPE
 
 from Model.configuration import *
 from Model.sysinfo import *
+from Service.utils import *
+
 
 class DiagToolService:
     @classmethod
     def insatll_dotnet_sos(cls):
-        command = ' '.join(
-            [
-                f'{DotNetInfo.dotnet} tool install dotnet-sos',
-                f'--tool-path {DiagnosticsConfiguration.root}',
-                f'--version {DiagnosticsConfiguration.version}',
-                f'--add-source {DiagnosticsConfiguration.feed}'
-            ]
-        ).split(' ')
-
-        p = Popen(command, stdin=PIPE, stdout=PIPE)
-        outs, errs = p.communicate()
+        tool_path_pattern = os.path.join(
+            DiagnosticsConfiguration.root,
+            '.store', 'dotnet-sos', '*', 'dotnet-sos', '*', 'tools', '*', 'any', 'dotnet-sos.dll'
+        )
+        if DiagnosticsConfiguration.version != '' and DiagnosticsConfiguration.feed != '':
+            command = ' '.join(
+                [
+                    f'{DotNetInfo.dotnet} tool install dotnet-sos',
+                    f'--tool-path {DiagnosticsConfiguration.root}',
+                    f'--version {DiagnosticsConfiguration.version}',
+                    f'--add-source {DiagnosticsConfiguration.feed}'
+                ]
+            )
+        else:
+            command = ' '.join(
+                [
+                    f'{DotNetInfo.dotnet} tool install dotnet-sos',
+                    f'--tool-path {DiagnosticsConfiguration.root}'
+                ]
+            )
         
-        print(outs.decode())
-        print(errs.decode())
+        if len(glob.glob(tool_path_pattern)) == 0: 
+            outs, errs = run_command_sync(command, stdin=PIPE, stdout=PIPE)
+            
+            print(outs)
+            print(errs)
 
-        tool_path_pattern = f'{DiagnosticsConfiguration.root}/.store/dotnet-sos/{DiagnosticsConfiguration.version}/dotnet-sos/{DiagnosticsConfiguration.version}/tools/*/any/dotnet-sos.dll'
         tool_path = glob.glob(tool_path_pattern)[0]
         tool_bin = f'{DotNetInfo.dotnet} {tool_path}'
 
         command = f'{tool_bin} install'
-
-        p = Popen(command, stdin=PIPE, stdout=PIPE)
-        outs, errs = p.communicate()
+        outs, errs = run_command_sync(command, stdin=PIPE, stdout=PIPE)
         
-        print(outs.decode())
-        print(errs.decode())
-    
+        print(outs)
+        print(errs)
+
+
     @classmethod
     def run_dumpheap(cls, dump_root: str):
         dump_path = glob.glob(os.path.join(dump_root, '*.dmp'))[0]
@@ -61,8 +73,7 @@ class DiagToolService:
 
             with open(analyze_output_path, 'w+') as fs:
                 command = f'{OSInfo.debugger} -z {dump_path} -cf {debug_script}'
-                p = Popen(stdout=fs, stderr=fs)
-                p.communicate()
+                run_command_sync(command, stdout=fs, stderr=fs)
             
         else:
             analyze_commands = [
@@ -73,7 +84,7 @@ class DiagToolService:
 
             with open(analyze_output_path, 'w+') as fs:
                 command = f'{OSInfo.debugger} -c {dump_path}'
-                p = Popen(command, stdin=PIPE,stdout=fs, stderr=fs)
+                p = run_command_async(command, stdin=PIPE, stdout=fs, stderr=fs)
                 for command in analyze_commands:
                     p.stdin.write(command)
                     
