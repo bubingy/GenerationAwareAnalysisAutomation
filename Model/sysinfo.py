@@ -3,5 +3,6 @@ class OSInfo:
     debugger = ''
 
 class DotNetInfo:
+    dotnet = ''
     dotnet_root = ''
     sdk_version = ''

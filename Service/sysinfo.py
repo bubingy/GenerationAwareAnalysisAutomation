@@ -18,12 +18,17 @@ class OSInfoService:
 class DotNetInfoService:
     @staticmethod
     def init_dotnet_info():
+        os_name = get_os_name()
         DotNetInfo.dotnet_root = os.path.join(TestConfiguration.test_bed, 'runtime', '.dotnet')
+
+        if 'win' in os_name: ext = '.exe'
+        else: ext = ''
+
+        DotNetInfo.dotnet = os.path.join(DotNetInfo.dotnet_root, f'dotnet{ext}')
+        
         for sdk in os.listdir(os.path.join(DotNetInfo.dotnet_root, 'sdk')):
             DotNetInfo.sdk_version = sdk
             break
-
-        os_name = get_os_name()
         
         if 'win' in os_name: os.environ['PATH'] = f'{DotNetInfo.dotnet_root};' + os.environ['PATH'] 
         else: os.environ['PATH'] = f'{DotNetInfo.dotnet_root}:' + os.environ['PATH']

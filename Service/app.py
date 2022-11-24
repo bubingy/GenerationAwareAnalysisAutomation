@@ -74,7 +74,7 @@ class AppService:
         corerun = ''
         corerun_candidates = glob.glob(
             os.path.join(
-                TestConfiguration.runtime_root, 'artifacts', 'tests',
+                RuntimeConfiguration.root, 'artifacts', 'tests',
                 'coreclr', '*', 'Tests', 'Core_Root', 'corerun*'
             )
         )
@@ -84,7 +84,7 @@ class AppService:
         genawaredemo = ''
         genawaredemo_candidates = glob.glob(
             os.path.join(
-                TestConfiguration.genawaredemo_root, 
+                GenAwareDemoConfiguration.root, 
                 'bin', 'Debug', '*', 'GenAwareDemo.dll'
             )
         )
@@ -126,6 +126,7 @@ class AppService:
         scenario_env['COMPlus_GCGenAnalysisTrace'] = '1'
 
         cls.run_app(test_result_root, scenario_env)
+        return test_result_root
 
 
     @classmethod
@@ -138,6 +139,7 @@ class AppService:
         scenario_env['COMPlus_GCGenAnalysisTrace'] = '0'
 
         cls.run_app(test_result_root, scenario_env)
+        return test_result_root
 
 
     @classmethod
@@ -150,3 +152,4 @@ class AppService:
         scenario_env['COMPlus_GCGenAnalysisTrace'] = '1'
 
         cls.run_app(test_result_root, scenario_env)
+        return test_result_root

@@ -6,6 +6,7 @@ from Model.configuration import *
 from Model.sysinfo import *
 from Service.configuration import ConfigurationService
 from Service.sysinfo import *
+from Service.diagnostics import DiagToolService
 from Service.app import AppService
 
 
@@ -25,13 +26,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.action == 'download': 
-        # AppService.download_runtime()
+        AppService.download_runtime()
         AppService.download_genawaredemo()
 
     if args.action == 'run': 
+        DotNetInfoService.init_dotnet_info()
+        DiagToolService.insatll_dotnet_sos()
         AppService.run_trace_only_scenario()
-        AppService.run_dump_only_scenario()
-        AppService.run_trace_dump_scenario()
+        dump_root = AppService.run_dump_only_scenario()
+        DiagToolService.run_dumpheap(dump_root)
+        dump_root = AppService.run_trace_dump_scenario()
+        DiagToolService.run_dumpheap(dump_root)
 
     if args.action == 'clean':
         if 'win' in OSInfo.os_name: home_path = os.environ['USERPROFILE']
