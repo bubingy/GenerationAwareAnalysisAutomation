@@ -3,6 +3,15 @@ TESTBED=""
 RUNTIMECOMMIT=""
 BLOGSAMPLESCOMMIT=""
 
+HELPMESSAGE="
+./GenerationAwareAnalysisRunner.sh <action>
+action:
+    download - clone the latest source to local
+    update - retrieve update from github
+    build - build runtime and blogsample
+    test - run the test
+"
+
 printHelpMessage() {
     # TODO
     echo "help message"
@@ -91,7 +100,7 @@ generateTraceOnly() {
     export COMPlus_GCGenAnalysisBytes=16E360
     export COMPlus_GCGenAnalysisDump=0
     export COMPlus_GCGenAnalysisTrace=1
-    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/net5.0/GenAwareDemo.dll"
+    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/*/GenAwareDemo.dll"
     popd
 }
 
@@ -104,7 +113,7 @@ generateTraceDump() {
     export COMPlus_GCGenAnalysisBytes=16E360
     export COMPlus_GCGenAnalysisDump=1
     export COMPlus_GCGenAnalysisTrace=1
-    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/net5.0/GenAwareDemo.dll"
+    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/*/GenAwareDemo.dll"
     popd
 }
 
@@ -117,29 +126,41 @@ generateDumpOnly() {
     export COMPlus_GCGenAnalysisBytes=16E360
     export COMPlus_GCGenAnalysisDump=1
     export COMPlus_GCGenAnalysisTrace=0
-    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/net5.0/GenAwareDemo.dll"
+    runCommand "$TESTBED/runtime/artifacts/tests/coreclr/*/Tests/Core_Root/corerun $TESTBED/blog-samples/GenAwareDemo/bin/Debug/*/GenAwareDemo.dll"
     popd
 }
 
-# case "$1" in
-#     help) printHelpMessage ;;
-
-#     download) echo "download" ;
-#         case "$2" in
-#             -c|--commit) echo "start download";;
-#             *)  echo "download dotnet/runtime require commit number specified!"; printHelpMessage; exit 1;;
-#         esac ;;
-
-#     build) echo "build" ;;
-
-#     test) ;;
-        
-#     *) printHelpMessage ;;
-# esac
+##################
+## MAIN PROCESS ##
+##################
 loadConfig
-generateDumpOnly
-generateTraceDump
-generateTraceOnly
+case "$1" in
+    help) printHelpMessage ;;
+
+    download) 
+        echo "downloading runtime" ;
+        downloadRuntime ;
+        echo "downloading blog-samples" ;
+        downloadBlogSample ;;
+
+    update)
+        echo "updating runtime" ;
+        updateRuntime ;
+        echo "updating blog-samples" ;
+        updateBlogSample ;;
+
+    build) 
+        echo "building runtime" ; buildRuntime ;
+        echo "building blog-samples" ; buildBlogSample ;;
+
+    test) 
+        echo "trace only scenario" ; generateTraceOnly ;
+        echo "trace & dump scenario" ; generateTraceDump ;
+        echo "dump only scenario" ; generateDumpOnly ;;
+        
+    *) printHelpMessage ;;
+esac
+
 # TODO: check before creating directory
 # mkdir $TESTBED
 
