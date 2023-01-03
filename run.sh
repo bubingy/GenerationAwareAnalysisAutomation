@@ -20,10 +20,10 @@ printHelpMessage() {
 loadConfig() {
     while read -r line
     do
-        case ${line%:*} in
-            TestBed) TESTBED=${line#*:};;
-            RuntimeCommit) RUNTIMECOMMIT=${line#*:};;
-            BlogSamplesCommit) BLOGSAMPLESCOMMIT=${line#*:};;
+        case ${line%=*} in
+            TestBed) TESTBED=${line#*=};;
+            RuntimeCommit) RUNTIMECOMMIT=${line#*=};;
+            BlogSamplesCommit) BLOGSAMPLESCOMMIT=${line#*=};;
         esac
     done < $WORKDIR/config
 }
@@ -58,7 +58,7 @@ updateRuntime() {
 buildRuntime(){
     pushd $TESTBED/runtime
     runCommand "./build.sh -c checked -s clr"
-    runCommand "./build -c release -s libs"
+    runCommand "./build.sh -c release -s libs"
     runCommand "./src/tests/build.sh generatelayoutonly checked"
     popd
 }
@@ -160,10 +160,3 @@ case "$1" in
         
     *) printHelpMessage ;;
 esac
-
-# TODO: check before creating directory
-# mkdir $TESTBED
-
-# pushd $TESTBED
-
-# popd
