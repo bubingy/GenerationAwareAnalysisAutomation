@@ -8,7 +8,6 @@ HELPMESSAGE="
 action:
     download - clone the latest source to local
     update - retrieve update from github
-    build - build runtime and blogsample
     test - run the test
 "
 
@@ -55,14 +54,6 @@ updateRuntime() {
     popd
 }
 
-buildRuntime(){
-    pushd $TESTBED/runtime
-    runCommand "./build.sh -c checked -s clr"
-    runCommand "./build.sh -c release -s libs"
-    runCommand "./src/tests/build.sh generatelayoutonly checked"
-    popd
-}
-
 downloadBlogSample() {
     if [ ! -d $TESTBED ]; then 
         mkdir $TESTBED
@@ -82,12 +73,6 @@ updateBlogSample() {
     pushd $TESTBED/blog-samples
     runCommand "git pull"
     runCommand "git reset --soft $BLOGSAMPLESCOMMIT"
-    popd
-}
-
-buildBlogSample(){
-    pushd $TESTBED/blog-samples/GenAwareDemo
-    runCommand "dotnet build"
     popd
 }
 
@@ -130,6 +115,18 @@ generateDumpOnly() {
     popd
 }
 
+collectResult() {
+    if [ ! -d $TESTBED/TestResult ]; then 
+        mkdir $TESTBED/TestResult
+    else
+        rm -rf $TESTBED/TestResult/*
+    fi
+
+    mv $TESTBED/traceonly $TESTBED/TestResult
+    mv $TESTBED/tracedump $TESTBED/TestResult
+    mv $TESTBED/dumponly $TESTBED/TestResult
+}
+
 ##################
 ## MAIN PROCESS ##
 ##################
@@ -149,14 +146,11 @@ case "$1" in
         echo "updating blog-samples" ;
         updateBlogSample ;;
 
-    build) 
-        echo "building runtime" ; buildRuntime ;
-        echo "building blog-samples" ; buildBlogSample ;;
-
     test) 
         echo "trace only scenario" ; generateTraceOnly ;
         echo "trace & dump scenario" ; generateTraceDump ;
-        echo "dump only scenario" ; generateDumpOnly ;;
+        echo "dump only scenario" ; generateDumpOnly ;
+        echo "collect result" ; collectResult ;;
         
     *) printHelpMessage ;;
 esac

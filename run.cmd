@@ -18,12 +18,6 @@ if %1==update (
     echo updating blog-samples
     call :updateBlogSample ;;
 )
-if %1==build (
-    echo building runtime
-    call :buildRuntime
-    echo building blog-samples
-    call :buildBlogSample
-) 
 if %1==test (
     echo trace only scenario
     call :generateTraceOnly
@@ -74,14 +68,6 @@ EXIT /B 0
     popd
 EXIT /B 0
 
-:buildRuntime
-    pushd %TESTBED%\runtime
-    call :runCommand "build -c checked -s clr"
-    call :runCommand "build -c release -s libs"
-    call :runCommand "src/tests/build generatelayoutonly checked"
-    popd
-EXIT /B 0
-
 :downloadBlogSample
     if not exist %TESTBED% (
         mkdir %TESTBED%
@@ -101,12 +87,6 @@ EXIT /B 0
     pushd %TESTBED%\blog-samples
     call :runCommand "git pull"
     call :runCommand "git reset --soft %BLOGSAMPLESCOMMIT%"
-    popd
-EXIT /B 0
-
-:buildBlogSample
-    pushd %TESTBED%\blog-samples\GenAwareDemo
-    call :runCommand "dotnet build"
     popd
 EXIT /B 0
 
@@ -148,3 +128,15 @@ EXIT /B 0
     call :runCommand "%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll"
     popd
 EXIT /B 0
+
+:collectResult
+    if not exist %TESTBED%\TestResult (
+        mkdir %TESTBED%\TestResult
+    )
+    else (
+        rd /s/q %TESTBED%\TestResult\*
+    )
+
+    move %TESTBED%\traceonly %TESTBED%\TestResult
+    move %TESTBED%\tracedump %TESTBED%\TestResult
+    move %TESTBED%\dumponly %TESTBED%\TestResult
