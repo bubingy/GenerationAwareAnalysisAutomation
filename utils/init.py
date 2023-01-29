@@ -14,6 +14,7 @@ def load_config(config_file_path: os.PathLike) -> None:
     conf.read(config_file_path)
 
     config.test_bed = conf['Test']['testbed']
+    if not os.path.exists(config.test_bed): os.makedirs(config.test_bed)
 
     config.runtime_root = os.path.join(config.test_bed, 'runtime')
     config.runtime_commit = conf['Runtime']['commit']

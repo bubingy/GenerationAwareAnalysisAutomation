@@ -22,7 +22,7 @@ def clean_blog_samples() -> None:
     git_reset(config.blog_samples_root, config.blog_samples_commit, 'hard')
 
 
-def update_all() -> None:
+def clean_all() -> None:
     '''clean dotnet/runtime and cshung/blog-samples
 
     :return: None
