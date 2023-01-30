@@ -21,7 +21,7 @@ if %1==update (
 if %1==test (
     echo trace only scenario
     call :generateTraceOnly
-    echo trace & dump scenario
+    echo trace with dump scenario
     call :generateTraceDump
     echo dump only scenario
     call :generateDumpOnly
@@ -30,13 +30,13 @@ if %1==test (
 :loadConfig 
     FOR /F "tokens=1,2 delims==" %%a in (config) DO (
         if %%a==TestBed (
-            set TESTBED=%%b
+            %TESTBED%=%%b
         )
         if %%a==RuntimeCommit (
-            set RUNTIMECOMMIT=%%b
+            %RUNTIMECOMMIT%=%%b
         )
         if %%a==BlogSamplesCommit (
-            set BLOGSAMPLESCOMMIT=%%b
+            %BLOGSAMPLESCOMMIT%=%%b
         ) 
     ) 
 EXIT /B 0
@@ -99,7 +99,8 @@ EXIT /B 0
     set COMPlus_GCGenAnalysisBytes=16E360
     set COMPlus_GCGenAnalysisDump=0
     set COMPlus_GCGenAnalysisTrace=1
-    call :runCommand "%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll"
+    set command=%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll
+    call :runCommand %command%
     popd
 EXIT /B 0
 
@@ -112,7 +113,8 @@ EXIT /B 0
     set COMPlus_GCGenAnalysisBytes=16E360
     set COMPlus_GCGenAnalysisDump=1
     set COMPlus_GCGenAnalysisTrace=1
-    call :runCommand "%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll"
+    set command=%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll
+    call :runCommand %command%
     popd
 EXIT /B 0
 
@@ -125,7 +127,8 @@ EXIT /B 0
     set COMPlus_GCGenAnalysisBytes=16E360
     set COMPlus_GCGenAnalysisDump=1
     set COMPlus_GCGenAnalysisTrace=0
-    call :runCommand "%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll"
+    set command=%TESTBED%\runtime\artifacts\tests\coreclr\windows.x64.Checked\Tests\Core_Root\corerun %TESTBED%\blog-samples\GenAwareDemo\bin\Debug\net5.0\GenAwareDemo.dll
+    call :runCommand %command%
     popd
 EXIT /B 0
 

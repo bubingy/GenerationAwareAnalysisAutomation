@@ -12,7 +12,6 @@ def load_config(config_file_path: os.PathLike) -> None:
     '''
     conf = configparser.ConfigParser()
     conf.read(config_file_path)
-
     config.test_bed = conf['Test']['testbed']
     if not os.path.exists(config.test_bed): os.makedirs(config.test_bed)
 

@@ -29,5 +29,6 @@ def clean_all() -> None:
     '''
     assert os.path.exists(config.runtime_root)
     assert os.path.exists(config.blog_samples_root)
-    clean_runtime()
-    clean_blog_samples()
+
+    git_reset(config.runtime_root, config.runtime_commit, 'hard')
+    git_reset(config.blog_samples_root, config.blog_samples_commit, 'hard')
