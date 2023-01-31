@@ -1,4 +1,5 @@
 test_bed = ''
+result_bed = ''
 
 runtime_root = ''
 runtime_commit = ''

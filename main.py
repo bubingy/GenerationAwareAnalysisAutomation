@@ -4,15 +4,8 @@ if __name__ == '__main__':
     
     action = sys.argv[1]
 
-    from utils.init import load_config
-    load_config(
-        os.path.join(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            ),
-            'run.conf'
-        )
-    )
+    from utils.init import init_test
+    init_test()
 
     if action == 'download':
         from action import download
@@ -31,7 +24,10 @@ if __name__ == '__main__':
             elif repo == 'blog-samples': update.update_blog_samples()
             else:                        raise Exception(f'unknown repo: {repo}')
     elif action == 'test':
-        pass
+        from action import test
+        test.test_trace_only_scenario()
+        test.test_trace_dump_scenario()
+        test.test_dump_only_scenario()
     elif action == 'clean':
         from action import clean
         if len(sys.argv) <= 2:           clean.clean_all()
