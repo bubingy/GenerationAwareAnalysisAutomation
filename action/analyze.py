@@ -23,8 +23,12 @@ def analyze_dump(dump_root: str) -> None:
         'dump_analyze.log'
     )
 
+    tool_path_pattern = \
+        f'{config.tool_root}/.store/dotnet-dump/*/dotnet-dump/*/tools/*/any/dotnet-dump.dll'
+    tool_path = glob.glob(tool_path_pattern)[0]
+
     with open(analyze_output_path, 'w+') as f:
-        command = f'dotnet-dump analyze {dump_path}'
+        command = f'dotnet {tool_path} analyze {dump_path}'
         print(f'run command: {command}')
         proc = run_command_async(
             command,
@@ -36,7 +40,7 @@ def analyze_dump(dump_root: str) -> None:
         )
 
         try:
-            proc.stdin.write('dumpheap')
+            proc.stdin.write(b'dumpheap\n')
         except Exception as exception:
             f.write(f'{exception}\n'.encode('utf-8'))
             
