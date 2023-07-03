@@ -3,7 +3,7 @@ import sys
 import configparser
 
 import config
-import sysinfo
+from utils.sysinfo import get_rid
 
 
 def load_config(config_file_path: os.PathLike) -> None:
@@ -32,7 +32,7 @@ def load_config(config_file_path: os.PathLike) -> None:
     config.blog_samples_root = os.path.join(config.test_bed, 'blog-samples')
     config.blog_samples_commit = conf['Blog-Samples']['commit']
 
-    config.rid = sysinfo.get_rid()
+    config.rid = get_rid()
     if 'win' in config.rid:
         env_connector = ';'
     else: 
