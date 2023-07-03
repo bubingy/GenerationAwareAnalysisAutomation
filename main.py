@@ -1,5 +1,4 @@
 if __name__ == '__main__':
-    import os
     import sys
     
     action = sys.argv[1]
@@ -24,10 +23,16 @@ if __name__ == '__main__':
             elif repo == 'blog-samples': update.update_blog_samples()
             else:                        raise Exception(f'unknown repo: {repo}')
     elif action == 'test':
-        from action import test
-        test.test_trace_only_scenario()
-        test.test_trace_dump_scenario()
-        test.test_dump_only_scenario()
+        from action import collect
+        from action import analyze
+        analyze.install_dotnet_dump()
+
+        dump_root = collect.collect_for_trace_only_scenario()
+        analyze.analyze_dump(dump_root)
+        dump_root = collect.collect_for_trace_dump_scenario()
+        analyze.analyze_dump(dump_root)
+        dump_root = collect.collect_for_dump_only_scenario()
+        analyze.analyze_dump(dump_root)
     elif action == 'clean':
         from action import clean
         if len(sys.argv) <= 2:           clean.clean_all()

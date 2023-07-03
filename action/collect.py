@@ -8,7 +8,8 @@ import config
 from utils.terminal import run_command_async
 
 
-def run_test(env: dict, output_dir: os.PathLike) -> None:
+def collect(env: dict, output_dir: os.PathLike) -> None:
+    # search for core_run
     core_run_path_pattern = os.path.join(
         config.runtime_root,
         'artifacts', 'tests', 'coreclr',
@@ -18,6 +19,7 @@ def run_test(env: dict, output_dir: os.PathLike) -> None:
     assert len(core_run_path_candidates) >= 1
     core_run_path = core_run_path_candidates[0]
 
+    # search for GenAwareDemo.dll
     app_path_pattern = os.path.join(
         config.blog_samples_root,
         'GenAwareDemo', 'bin', 'Debug',
@@ -27,6 +29,7 @@ def run_test(env: dict, output_dir: os.PathLike) -> None:
     assert len(app_path_candidates) >= 1
     app_path = app_path_candidates[0]
 
+    # generate command
     command = f'{core_run_path} {app_path}'
 
     tmp_path = os.path.join(config.result_bed, 'tmp')
@@ -34,6 +37,7 @@ def run_test(env: dict, output_dir: os.PathLike) -> None:
     tmp_read = open(tmp_path, 'r')
     
     p = run_command_async(command, cwd=output_dir, stdin=PIPE, stdout=tmp_write, env=env)
+    # make sure the app is running before input
     while True:
         if 'My process id is' in tmp_read.read():
             print('app is running!')
@@ -46,7 +50,7 @@ def run_test(env: dict, output_dir: os.PathLike) -> None:
     tmp_write.close()
 
 
-def test_trace_only_scenario() -> None:
+def collect_for_trace_only_scenario() -> str:
     result_root = os.path.join(config.result_bed, 'traceonly')
     if os.path.exists(result_root): shutil.rmtree(result_root)
     os.makedirs(result_root)
@@ -57,10 +61,11 @@ def test_trace_only_scenario() -> None:
     env['COMPlus_GCGenAnalysisDump'] = '0'
     env['COMPlus_GCGenAnalysisTrace'] = '1'
 
-    run_test(env, result_root)
+    collect(env, result_root)
+    return result_root
 
 
-def test_trace_dump_scenario() -> None:
+def collect_for_trace_dump_scenario() -> str:
     result_root = os.path.join(config.result_bed, 'tracedump')
     if os.path.exists(result_root): shutil.rmtree(result_root)
     os.makedirs(result_root)
@@ -71,10 +76,11 @@ def test_trace_dump_scenario() -> None:
     env['COMPlus_GCGenAnalysisDump'] = '1'
     env['COMPlus_GCGenAnalysisTrace'] = '1'
 
-    run_test(env, result_root)
+    collect(env, result_root)
+    return result_root
 
 
-def test_dump_only_scenario() -> None:
+def collect_for_dump_only_scenario() -> str:
     result_root = os.path.join(config.result_bed, 'dumponly')
     if os.path.exists(result_root): shutil.rmtree(result_root)
     os.makedirs(result_root)
@@ -85,4 +91,39 @@ def test_dump_only_scenario() -> None:
     env['COMPlus_GCGenAnalysisDump'] = '1'
     env['COMPlus_GCGenAnalysisTrace'] = '0'
 
-    run_test(env, result_root)
+    collect(env, result_root)
+    return result_root
+
+
+def collect_symbols() -> None:
+    if 'win' not in config.rid: return
+    
+    symbols_dir = os.path.join(config.test_bed, 'symbols')
+    if not os.path.exists(symbols_dir): os.makedirs(symbols_dir)
+
+    core_root_dlls = glob.glob(
+        os.path.join(
+            config.runtime_root, 'artifacts', 'tests', 'coreclr',
+            'windows.x64.Checked', 'Tests', 'Core_Root', '*.dll'
+        )
+    )
+    for core_root_dll in core_root_dlls:
+        shutil.copy(core_root_dll, symbols_dir)
+
+    app_dlls = glob.glob(
+        os.path.join(
+            config.blog_samples_root, 'GenAwareDemo',
+            'bin', 'Debug', 'net*', '*.dll'
+        )
+    )
+    for app_dll in app_dlls:
+        shutil.copy(app_dll, symbols_dir)
+
+    linux_symbols = glob.glob(
+        os.path.join(
+            config.runtime_root, 'artifacts', 'bin', 'coreclr',
+            'linux.x64.Checked', '*.dll'
+        )
+    )
+    for linux_symbol in linux_symbols:
+        shutil.copy(linux_symbol, symbols_dir)
