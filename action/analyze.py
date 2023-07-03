@@ -27,6 +27,10 @@ def analyze_dump(dump_root: str) -> None:
         f'{config.tool_root}/.store/dotnet-dump/*/dotnet-dump/*/tools/*/any/dotnet-dump.dll'
     tool_path = glob.glob(tool_path_pattern)[0]
 
+    analyze_commands = [
+        b'dumpheap\n',
+        b'exit\n'
+    ]
     with open(analyze_output_path, 'w+') as f:
         command = f'dotnet {tool_path} analyze {dump_path}'
         print(f'run command: {command}')
@@ -39,9 +43,10 @@ def analyze_dump(dump_root: str) -> None:
             stderr=f
         )
 
-        try:
-            proc.stdin.write(b'dumpheap\n')
-        except Exception as exception:
-            f.write(f'{exception}\n'.encode('utf-8'))
-            
+        for command in analyze_commands:
+            try:
+                proc.stdin.write(command)
+            except Exception as exception:
+                f.write(f'{exception}\n'.encode('utf-8'))
+                continue
         proc.communicate()
