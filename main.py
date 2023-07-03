@@ -33,6 +33,8 @@ if __name__ == '__main__':
         analyze.analyze_dump(dump_root)
         dump_root = collect.collect_for_dump_only_scenario()
         analyze.analyze_dump(dump_root)
+
+        collect.collect_symbols()
     elif action == 'clean':
         from action import clean
         if len(sys.argv) <= 2:           clean.clean_all()
