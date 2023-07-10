@@ -10,6 +10,7 @@ def download_runtime() -> None:
     :return: None
     '''
     assert not os.path.exists(config.runtime_root)
+    print(f'clone runtime from github')
     git_clone('dotnet', 'runtime', config.test_bed)
     git_reset(config.runtime_root, config.runtime_commit)
 
@@ -20,6 +21,7 @@ def download_blog_samples() -> None:
     :return: None
     '''
     assert not os.path.exists(config.blog_samples_root)
+    print(f'clone blog-samples from github')
     git_clone('cshung', 'blog-samples', config.test_bed)
     git_reset(config.blog_samples_root, config.blog_samples_commit)
 

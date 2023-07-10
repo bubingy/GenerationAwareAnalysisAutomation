@@ -2,10 +2,9 @@ import os
 import glob
 import time
 import shutil
-from subprocess import PIPE
 
 import config
-from utils.terminal import run_command_async
+from utils.terminal import run_command_async, PIPE
 
 
 def collect(env: dict, output_dir: os.PathLike) -> None:
@@ -61,6 +60,7 @@ def collect_for_trace_only_scenario() -> str:
     env['COMPlus_GCGenAnalysisDump'] = '0'
     env['COMPlus_GCGenAnalysisTrace'] = '1'
 
+    print('collect trace only')
     collect(env, result_root)
     return result_root
 
@@ -76,6 +76,7 @@ def collect_for_trace_dump_scenario() -> str:
     env['COMPlus_GCGenAnalysisDump'] = '1'
     env['COMPlus_GCGenAnalysisTrace'] = '1'
 
+    print('collect trace and dump')
     collect(env, result_root)
     return result_root
 
@@ -91,6 +92,7 @@ def collect_for_dump_only_scenario() -> str:
     env['COMPlus_GCGenAnalysisDump'] = '1'
     env['COMPlus_GCGenAnalysisTrace'] = '0'
 
+    print('collect dump only')
     collect(env, result_root)
     return result_root
 
@@ -98,6 +100,7 @@ def collect_for_dump_only_scenario() -> str:
 def collect_symbols() -> None:
     if 'win' not in config.rid: return
     
+    print('collect symbol files')
     symbols_dir = os.path.join(config.test_bed, 'symbols')
     if not os.path.exists(symbols_dir): os.makedirs(symbols_dir)
 

@@ -14,14 +14,10 @@ if __name__ == '__main__':
             if repo == 'runtime':        download.download_runtime()
             elif repo == 'blog-samples': download.download_blog_samples()
             else:                        raise Exception(f'unknown repo: {repo}')
-    elif action == 'update':
-        from action import update
-        if len(sys.argv) <= 2:           update.update_all()
-        else: 
-            repo = sys.argv[2]
-            if repo == 'runtime':        update.update_runtime()
-            elif repo == 'blog-samples': update.update_blog_samples()
-            else:                        raise Exception(f'unknown repo: {repo}')
+    elif action == 'build':
+        from action import build
+        build.build_runtime()
+        build.build_blog_samples()
     elif action == 'test':
         from action import collect
         from action import analyze
