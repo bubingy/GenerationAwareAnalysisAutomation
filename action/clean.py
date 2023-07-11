@@ -1,25 +1,69 @@
 import os
+import shutil
 
 import config
 from utils.git import git_reset
 
 
-def clean_runtime() -> None:
-    '''clean dotnet/runtime
-
+def remove_dotnet_temp() -> None:
+    '''Remove dotnet temporary files and folders
+    
     :return: None
     '''
-    assert os.path.exists(config.runtime_root)
-    git_reset(config.runtime_root, config.runtime_commit, 'hard')
+    if 'win' in config.rid: home_path = os.environ['USERPROFILE']
+    else: home_path = os.environ['HOME']
+
+    to_be_removed = [
+        os.path.join(home_path, '.aspnet'),
+        os.path.join(home_path, '.debug'),
+        os.path.join(home_path, '.dotnet'),
+        os.path.join(home_path, '.nuget'),
+        os.path.join(home_path, '.templateengine'),
+        os.path.join(home_path, '.local')
+    ]
+
+    print('The following folders and files will be deleted if exists:')
+    for f in to_be_removed: print(f)
+    print('Press y or Y to continue. Press other keys to cancel.')
+
+    response = input()
+    if response.lower() != 'y': return
+
+    for f in to_be_removed:
+        if not os.path.exists(f): continue
+        try:
+            if os.path.isdir(f): shutil.rmtree(f)
+            else: os.remove(f)
+        except Exception as e:
+            print(f'fail to remove {f}: {e}')
 
 
-def clean_blog_samples() -> None:
-    '''clean cshung/blog-samples
-
+def clean_test_bed() -> None:
+    '''Remove runtime, blog-samples, dotnet-dump and testresult folder
+    
     :return: None
     '''
-    assert os.path.exists(config.blog_samples_root)
-    git_reset(config.blog_samples_root, config.blog_samples_commit, 'hard')
+    to_be_removed = [
+        config.result_bed,
+        config.tool_root, 
+        config.blog_samples_root,
+        config.runtime_root
+    ]
+
+    print('The following folders and files will be deleted if exists:')
+    for f in to_be_removed: print(f)
+    print('Press y or Y to continue. Press other keys to cancel.')
+
+    response = input()
+    if response.lower() != 'y': return
+
+    for f in to_be_removed:
+        if not os.path.exists(f): continue
+        try:
+            if os.path.isdir(f): shutil.rmtree(f)
+            else: os.remove(f)
+        except Exception as e:
+            print(f'fail to remove {f}: {e}')
 
 
 def clean_all() -> None:
@@ -27,8 +71,5 @@ def clean_all() -> None:
 
     :return: None
     '''
-    assert os.path.exists(config.runtime_root)
-    assert os.path.exists(config.blog_samples_root)
-
-    git_reset(config.runtime_root, config.runtime_commit, 'hard')
-    git_reset(config.blog_samples_root, config.blog_samples_commit, 'hard')
+    remove_dotnet_temp()
+    clean_test_bed()

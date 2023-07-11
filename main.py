@@ -16,8 +16,12 @@ if __name__ == '__main__':
             else:                        raise Exception(f'unknown repo: {repo}')
     elif action == 'build':
         from action import build
-        build.build_runtime()
-        build.build_blog_samples()
+        if len(sys.argv) <= 2:           build.build_all()
+        else:
+            repo = sys.argv[2]
+            if repo == 'runtime':        build.build_runtime()
+            elif repo == 'blog-samples': build.build_genawaredemo()
+            else:                        raise Exception(f'unknown repo: {repo}')
     elif action == 'test':
         from action import collect
         from action import analyze

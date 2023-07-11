@@ -1,3 +1,5 @@
+import os
+
 import config
 from utils.terminal import run_command_sync
 
@@ -27,10 +29,17 @@ def build_runtime():
             env=config.basic_env_variables
         )
 
-def build_blog_samples():
+def build_genawaredemo():
     print('build blog-samples')
     run_command_sync(
         'dotnet build', 
-        cwd=config.blog_samples_root,
+        cwd=os.path.join(config.blog_samples_root, 'GenAwareDemo'),
         env=config.basic_env_variables
     )
+
+
+def build_all():
+    assert not os.path.exists(config.runtime_root)
+    assert not os.path.exists(config.blog_samples_root)
+    build_runtime()
+    build_genawaredemo()
