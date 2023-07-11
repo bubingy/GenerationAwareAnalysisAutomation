@@ -37,11 +37,6 @@ if __name__ == '__main__':
         collect.collect_symbols()
     elif action == 'clean':
         from action import clean
-        if len(sys.argv) <= 2:           clean.clean_all()
-        else: 
-            repo = sys.argv[2]
-            if repo == 'runtime':        clean.clean_runtime()
-            elif repo == 'blog-samples': clean.clean_blog_samples()
-            else:                        raise Exception(f'unknown repo: {repo}')
+        clean.clean_all()
     else:
         raise Exception(f'unknown action: {action}')
