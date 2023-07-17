@@ -39,7 +39,7 @@ def build_genawaredemo():
 
 
 def build_all():
-    assert not os.path.exists(config.runtime_root)
-    assert not os.path.exists(config.blog_samples_root)
+    assert os.path.exists(config.runtime_root)
+    assert os.path.exists(config.blog_samples_root)
     build_runtime()
     build_genawaredemo()
