@@ -2,6 +2,7 @@ test_bed = ''
 result_bed = ''
 
 sdk_root = ''
+dotnet_bin = ''
 tool_root = ''
 
 runtime_root = ''

@@ -14,12 +14,25 @@ def load_config(config_file_path: os.PathLike) -> None:
     '''
     conf = configparser.ConfigParser()
     conf.read(config_file_path)
+    
+    config.rid = get_rid()
+    if 'win' in config.rid:
+        env_connector = ';'
+        bin_ext = '.exe'
+    else: 
+        env_connector = ':'
+        bin_ext = ''
+
     config.test_bed = conf['Test']['testbed']
     config.result_bed = os.path.join(config.test_bed, 'TestResult')
 
     config.sdk_root = os.path.join(
         config.runtime_root,
         '.dotnet'
+    )
+    config.dotnet_bin = os.path.join(
+        config.sdk_root,
+        f'dotnet{bin_ext}'
     )
     config.tool_root = os.path.join(
         config.test_bed,
@@ -31,12 +44,6 @@ def load_config(config_file_path: os.PathLike) -> None:
 
     config.blog_samples_root = os.path.join(config.test_bed, 'blog-samples')
     config.blog_samples_commit = conf['Blog-Samples']['commit']
-
-    config.rid = get_rid()
-    if 'win' in config.rid:
-        env_connector = ';'
-    else: 
-        env_connector = ':'
 
     env = os.environ.copy()
     env['DOTNET_ROOT'] = config.sdk_root

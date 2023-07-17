@@ -32,7 +32,7 @@ def build_runtime():
 def build_genawaredemo():
     print('build blog-samples')
     run_command_sync(
-        'dotnet build', 
+        f'{config.dotnet_bin} build', 
         cwd=os.path.join(config.blog_samples_root, 'GenAwareDemo'),
         env=config.basic_env_variables
     )
