@@ -31,6 +31,7 @@ def build_runtime():
 
 def build_genawaredemo():
     print('build blog-samples')
+    print(config.dotnet_bin)
     run_command_sync(
         f'{config.dotnet_bin} build', 
         cwd=os.path.join(config.blog_samples_root, 'GenAwareDemo'),

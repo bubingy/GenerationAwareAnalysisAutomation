@@ -25,6 +25,12 @@ def load_config(config_file_path: os.PathLike) -> None:
 
     config.test_bed = conf['Test']['testbed']
     config.result_bed = os.path.join(config.test_bed, 'TestResult')
+    
+    config.runtime_root = os.path.join(config.test_bed, 'runtime')
+    config.runtime_commit = conf['Runtime']['commit']
+
+    config.blog_samples_root = os.path.join(config.test_bed, 'blog-samples')
+    config.blog_samples_commit = conf['Blog-Samples']['commit']
 
     config.sdk_root = os.path.join(
         config.runtime_root,
@@ -38,12 +44,6 @@ def load_config(config_file_path: os.PathLike) -> None:
         config.test_bed,
         'dotnet-dump'
     )
-
-    config.runtime_root = os.path.join(config.test_bed, 'runtime')
-    config.runtime_commit = conf['Runtime']['commit']
-
-    config.blog_samples_root = os.path.join(config.test_bed, 'blog-samples')
-    config.blog_samples_commit = conf['Blog-Samples']['commit']
 
     env = os.environ.copy()
     env['DOTNET_ROOT'] = config.sdk_root
