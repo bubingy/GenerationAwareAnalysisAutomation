@@ -125,7 +125,7 @@ def collect_symbols() -> None:
     linux_symbols = glob.glob(
         os.path.join(
             config.runtime_root, 'artifacts', 'bin', 'coreclr',
-            'linux.x64.Checked', '*.dll'
+            'linux.x64.Checked', 'x64', '*.dll'
         )
     )
     for linux_symbol in linux_symbols:
