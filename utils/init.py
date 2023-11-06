@@ -24,8 +24,11 @@ def load_config(config_file_path: os.PathLike) -> None:
         bin_ext = ''
 
     config.test_bed = conf['Test']['testbed']
+    config.perfview_bin = conf['Test']['perfview']
     config.result_bed = os.path.join(config.test_bed, 'TestResult')
     
+    config.vcvars64_activation_path = conf['Build']['vcvars64']
+
     config.runtime_root = os.path.join(config.test_bed, 'runtime')
     config.runtime_commit = conf['Runtime']['commit']
 

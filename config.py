@@ -1,5 +1,8 @@
 test_bed = ''
+perfview_bin = ''
 result_bed = ''
+
+vcvars64_activation_path = ''
 
 sdk_root = ''
 dotnet_bin = ''
