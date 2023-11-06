@@ -130,3 +130,9 @@ def collect_symbols() -> None:
     )
     for linux_symbol in linux_symbols:
         shutil.copy(linux_symbol, symbols_dir)
+
+    perfview_open_script_path = os.path.join(config.test_bed, 'open_perfview.bat')
+    with open(perfview_open_script_path, 'w+') as fp:
+        fp.write('@ECHO off\n')
+        fp.write(f'set _NT_SYMBOL_PATH={symbols_dir}\n')
+        fp.write(f'start {config.perfview_bin}\n')
