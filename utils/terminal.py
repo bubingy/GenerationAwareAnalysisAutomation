@@ -8,14 +8,22 @@ def run_command_sync(command: str, **kwargs) -> None:
     :param kwargs: see Popen kwargs for details
     :return: None
     '''
-    if 'shell' in kwargs.keys() and kwargs['shell'] == True:
-        arg = command
+    if 'shell' in kwargs.keys():
+        if all(kwargs['shell'] == True, isinstance(command, str)) \
+            or all(kwargs['shell'] == False, isinstance(command, list)):
+            print(command)
+            p = Popen(command, **kwargs)
+            p.communicate()
+        else:
+            raise(f'command type {type(command)} doesn\'t match with shell parameter.')
     else:
-        arg = command.split(' ')
-    print(command)
-    p = Popen(arg, **kwargs)
-    p.communicate()
-
+        if isinstance(command, list):
+            print(command)
+            p = Popen(command, **kwargs)
+            p.communicate()
+        else:
+            raise(f'command type {type(command)} doesn\'t match with shell parameter.')
+    
 
 def run_command_async(command: str, **kwargs) -> Popen:
     '''run command but not wait for return
@@ -24,9 +32,17 @@ def run_command_async(command: str, **kwargs) -> Popen:
     :param kwargs: see Popen kwargs for details
     :return: None
     '''
-    if 'shell' in kwargs.keys() and kwargs['shell'] == True:
-        arg = command
+    if 'shell' in kwargs.keys():
+        if all(kwargs['shell'] == True, isinstance(command, str)) \
+            or all(kwargs['shell'] == False, isinstance(command, list)):
+            print(command)
+            return Popen(command, **kwargs)
+        else:
+            raise(f'command type {type(command)} doesn\'t match with shell parameter.')
     else:
-        arg = command.split(' ')
-    print(command)
-    return Popen(arg, **kwargs)
+        if isinstance(command, list):
+            print(command)
+            return Popen(command, **kwargs)
+        else:
+            raise(f'command type {type(command)} doesn\'t match with shell parameter.')
+    

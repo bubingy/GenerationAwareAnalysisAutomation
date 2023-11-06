@@ -7,7 +7,7 @@ from utils.terminal import run_command_sync, run_command_async, PIPE
 
 def install_dotnet_dump() -> None:
     print('install dotnet-dump for analysis')
-    command = f'dotnet tool install dotnet-dump --tool-path {config.tool_root}'
+    command = f'dotnet tool install dotnet-dump --tool-path {config.tool_root}'.split(' ')
     
     run_command_sync(command, env=config.basic_env_variables)
 
@@ -33,7 +33,7 @@ def analyze_dump(dump_root: str) -> None:
         b'exit\n'
     ]
     with open(analyze_output_path, 'w+') as f:
-        command = f'dotnet {tool_path} analyze {dump_path}'
+        command = f'dotnet {tool_path} analyze {dump_path}'.split(' ')
         print(f'run command: {command}')
         proc = run_command_async(
             command,

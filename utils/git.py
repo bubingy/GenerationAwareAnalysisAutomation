@@ -32,9 +32,8 @@ def git_clone(owner: str, repo: str, parent_folder: os.PathLike) -> None:
     assert os.path.isdir(parent_folder)
     assert get_repo(owner, repo)
     
-    command = f'git clone https://github.com/{owner}/{repo}.git'
-    run_command_sync('git config --system core.longpaths true')
-    run_command_sync(command, cwd=parent_folder)
+    run_command_sync('git config --system core.longpaths true'.split(' '))
+    run_command_sync(f'git clone https://github.com/{owner}/{repo}.git'.split(' '), cwd=parent_folder)
 
 
 def git_pull(repo_folder: os.PathLike) -> None:
@@ -44,8 +43,8 @@ def git_pull(repo_folder: os.PathLike) -> None:
     :return: None 
     '''
     assert '.git' in os.listdir(repo_folder)
-    run_command_sync('git config --system core.longpaths true')
-    run_command_sync('git pull', cwd=repo_folder)
+    run_command_sync('git config --system core.longpaths true'.split(' '))
+    run_command_sync('git pull'.split(' '), cwd=repo_folder)
 
 
 def git_reset(repo_folder: os.PathLike, commit_number: str, reset_type: str='soft') -> None:
@@ -58,7 +57,6 @@ def git_reset(repo_folder: os.PathLike, commit_number: str, reset_type: str='sof
     '''
     assert reset_type in ['hard', 'soft']
     assert '.git' in os.listdir(repo_folder)
-    run_command_sync('git config --system core.longpaths true')
-    command = f'git reset --{reset_type} {commit_number}'
-    run_command_sync(command, cwd=repo_folder)
+    run_command_sync('git config --system core.longpaths true'.split(' '))
+    run_command_sync(f'git reset --{reset_type} {commit_number}'.split(' '), cwd=repo_folder)
 

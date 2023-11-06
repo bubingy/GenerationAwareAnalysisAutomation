@@ -29,7 +29,7 @@ def collect(env: dict, output_dir: os.PathLike) -> None:
     app_path = app_path_candidates[0]
 
     # generate command
-    command = f'{core_run_path} {app_path}'
+    command = f'{core_run_path} {app_path}'.split(' ')
 
     tmp_path = os.path.join(config.result_bed, 'tmp')
     tmp_write = open(tmp_path, 'w+')

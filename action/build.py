@@ -9,7 +9,7 @@ def build_runtime():
 
     if 'win' in config.rid: 
         script_engine = 'cmd.exe'
-        command = f'{script_engine} /k \"{config.vcvars64_activation_path}\"'
+        command = [script_engine, '/k', config.vcvars64_activation_path]
         p = run_command_async(
             command, 
             stdin=PIPE,
@@ -34,7 +34,7 @@ def build_runtime():
         for command in command_list:
             print(f'run command {command}')
             run_command_sync(
-                command,
+                command.split(' '),
                 cwd=config.runtime_root,
                 env=config.basic_env_variables
             )
@@ -43,7 +43,7 @@ def build_genawaredemo():
     print('build blog-samples')
     print(config.dotnet_bin)
     run_command_sync(
-        f'{config.dotnet_bin} build', 
+        f'{config.dotnet_bin} build'.split(' '), 
         cwd=os.path.join(config.blog_samples_root, 'GenAwareDemo'),
         env=config.basic_env_variables
     )
