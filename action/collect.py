@@ -1,18 +1,25 @@
 import os
 import glob
 import time
+import winreg
 import shutil
+import platform
 
 import config
 from utils.terminal import run_command_async, PIPE
 
 
 def collect(env: dict, output_dir: os.PathLike) -> None:
-    # search for core_run
-    core_run_path_pattern = os.path.join(
+    core_root = os.path.join(
         config.runtime_root,
         'artifacts', 'tests', 'coreclr',
-        '*', 'Tests', 'Core_Root', 'corerun*'
+        'windows.x64.Checked', 'Tests', 'Core_Root'
+    )
+    assert os.path.exists(core_root)
+
+    # search for core_run
+    core_run_path_pattern = os.path.join(
+        core_root, 'corerun*'
     )
     core_run_path_candidates = glob.glob(core_run_path_pattern)
     assert len(core_run_path_candidates) >= 1
@@ -27,6 +34,36 @@ def collect(env: dict, output_dir: os.PathLike) -> None:
     app_path_candidates = glob.glob(app_path_pattern)
     assert len(app_path_candidates) >= 1
     app_path = app_path_candidates[0]
+
+    # set registry keys
+    if platform.system().lower() == 'windows':
+        with winreg.OpenKeyEx(
+            winreg.HKEY_LOCAL_MACHINE, 
+            r'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\KnownManagedDebuggingDlls',
+            0,
+            winreg.KEY_SET_VALUE
+        ) as debug_dll:
+            winreg.SetValueEx(
+                debug_dll,
+                os.path.join(core_root, 'mscordaccore.dll'),
+                0,
+                winreg.REG_DWORD,
+                0
+            )
+
+        with winreg.OpenKeyEx(
+            winreg.HKEY_LOCAL_MACHINE, 
+            r'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\MiniDumpAuxiliaryDlls',
+            0,
+            winreg.KEY_SET_VALUE
+        ) as auxiliary_dll:
+            winreg.SetValueEx(
+                auxiliary_dll,
+                os.path.join(core_root, 'coreclr.dll'),
+                0,
+                winreg.REG_SZ,
+                os.path.join(core_root, 'mscordaccore.dll')
+            )    
 
     # generate command
     command = f'{core_run_path} {app_path}'.split(' ')
