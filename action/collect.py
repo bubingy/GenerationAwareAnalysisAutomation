@@ -1,7 +1,6 @@
 import os
 import glob
 import time
-import winreg
 import shutil
 import platform
 
@@ -40,6 +39,7 @@ def collect(env: dict, output_dir: os.PathLike) -> None:
     # set registry keys
     system = platform.system().lower()
     if system == 'windows':
+        import winreg
         with winreg.OpenKeyEx(
             winreg.HKEY_LOCAL_MACHINE, 
             r'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\KnownManagedDebuggingDlls',
