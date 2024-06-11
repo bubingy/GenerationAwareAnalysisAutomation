@@ -10,12 +10,14 @@ from utils.terminal import run_command_async, PIPE
 
 
 def collect(env: dict, output_dir: os.PathLike) -> None:
-    core_root = os.path.join(
+    core_root_pattern = os.path.join(
         config.runtime_root,
         'artifacts', 'tests', 'coreclr',
-        'windows.x64.Checked', 'Tests', 'Core_Root'
+        '*', 'Tests', 'Core_Root'
     )
-    assert os.path.exists(core_root)
+    core_root_candidates = glob.glob(core_root_pattern)
+    assert len(core_root_candidates) >= 1
+    core_root = core_root_candidates[0]
 
     # search for core_run
     core_run_path_pattern = os.path.join(
@@ -36,7 +38,8 @@ def collect(env: dict, output_dir: os.PathLike) -> None:
     app_path = app_path_candidates[0]
 
     # set registry keys
-    if platform.system().lower() == 'windows':
+    system = platform.system().lower()
+    if system == 'windows':
         with winreg.OpenKeyEx(
             winreg.HKEY_LOCAL_MACHINE, 
             r'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\KnownManagedDebuggingDlls',
