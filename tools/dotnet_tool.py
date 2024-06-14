@@ -2,13 +2,15 @@
 
 import glob
 from typing import Union
-from urllib import request
 
 import app
 from tools.terminal import run_command_sync
 
 
-@app.function_monitor()
+@app.function_monitor(
+    pre_run_msg='start to install dotnet-dump',
+    post_run_msg='install dotnet-dump completed'
+)
 def install_dotnet_dump(dotnet_bin_path: str, 
                         tool_root: str, 
                         env: dict) -> Union[str, Exception]:

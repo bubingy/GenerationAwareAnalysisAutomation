@@ -60,6 +60,10 @@ def build_genawaredemo(test_conf: GenerationAwareAnalyzeConfiguration):
     return app_root
 
 
+@app.function_monitor(
+    pre_run_msg='------ start to run genawaredemo ------',
+    post_run_msg='------ run genawaredemo completed ------'
+)
 def run_genawaredemo(test_conf: GenerationAwareAnalyzeConfiguration,
                      output_folder: str,
                      extra_env: os._Environ) -> Union[str, Exception]:
