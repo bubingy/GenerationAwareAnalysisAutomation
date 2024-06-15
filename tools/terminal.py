@@ -62,11 +62,17 @@ def run_command_sync(args: Union[Iterable[str], str], stdout=PIPE, stderr=PIPE, 
     print(f'run command: {command}')
     p = Popen(args, stdout=stdout, stderr=stderr, **kwargs)
     stdout, stderr = p.communicate()
-    if stdout is not None and stderr is not None:
+
+    if stdout is not None:
         out = stdout.decode()
-        err = stderr.decode()
         print(out)
+    else:
+        out = None
+    if stderr is not None:
+        err = stderr.decode()
         print(err)
+    else:
+        err = None
     '''
     # not safe
     while p.poll() is None:

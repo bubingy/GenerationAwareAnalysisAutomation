@@ -22,7 +22,7 @@ def git_clone(repo: str, dest: os.PathLike) -> None:
         repo_folder = dest
     
     command = ['git', 'clone', repo, repo_folder]
-    run_command_sync(command, stdout=None, stderr=None)
+    command, out, err = run_command_sync(command, stdout=None, stderr=None)
 
 
 def git_reset(repo_folder: os.PathLike, commit_number: str, reset_type: str='soft') -> None:
@@ -37,5 +37,5 @@ def git_reset(repo_folder: os.PathLike, commit_number: str, reset_type: str='sof
     assert '.git' in os.listdir(repo_folder)
 
     command = ['git', 'reset', f'--{reset_type}', commit_number]
-    run_command_sync(command, stdout=None, stderr=None, cwd=repo_folder)
+    command, out, err = run_command_sync(command, stdout=None, stderr=None, cwd=repo_folder)
 
