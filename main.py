@@ -46,11 +46,11 @@ if __name__ == '__main__':
         analyze.install_dotnet_dump(test_conf)
 
         dump_root = collect.collect_for_trace_only_scenario(test_conf)
-        analyze.analyze_dump(dump_root)
+        analyze.analyze_dump(test_conf, dump_root)
         dump_root = collect.collect_for_trace_dump_scenario(test_conf)
-        analyze.analyze_dump(dump_root)
+        analyze.analyze_dump(test_conf, dump_root)
         dump_root = collect.collect_for_dump_only_scenario(test_conf)
-        analyze.analyze_dump(dump_root)
+        analyze.analyze_dump(test_conf, dump_root)
 
         collect.collect_symbols(test_conf)
 
