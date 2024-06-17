@@ -13,10 +13,10 @@ class GenerationAwareAnalyzeConfiguration:
         runtime_short_commit = self.runtime_commit[:7]
 
         if os.path.exists(self._testbed):
-            self.test_bed = self._testbed
-        else:
             test_name = f'generation-aware_analyze-runtime-{runtime_short_commit}'
             self.test_bed = os.path.join(self._testbed, f'Testbed-{test_name}')
+        else:
+            self.test_bed = self._testbed
             
         self.test_result_folder = os.path.join(self.test_bed, f'TestResult')
 
