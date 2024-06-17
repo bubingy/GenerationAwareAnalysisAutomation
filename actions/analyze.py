@@ -53,10 +53,9 @@ def analyze_dump(test_conf: GenerationAwareAnalyzeConfiguration, output_folder: 
         return Exception(f'no dump file in {output_folder}')
     
     for dump_path in dump_path_list:
-        dump_name = os.path.basename(dump_path)
         analyze_output_path = os.path.join(
-            test_conf.analyze_folder,
-            dump_name.replace('dump', 'analyze')
+            output_folder,
+            'dump-analyze.txt'
         )
 
         analyze_commands = basic_analyze_commands.copy()

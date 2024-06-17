@@ -19,9 +19,9 @@ if __name__ == '__main__':
         else: 
             repo = sys.argv[2]
             if repo == 'runtime':
-                download.download_runtime()
+                download.download_runtime(test_conf)
             elif repo == 'blog-samples':
-                download.download_blog_samples()
+                download.download_blog_samples(test_conf)
             else:
                 raise Exception(f'unknown repo: {repo}')
     elif action == 'build':
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
         collect.set_registry_keys(test_conf)
         
-        analyze.install_dotnet_dump()
+        analyze.install_dotnet_dump(test_conf)
 
         dump_root = collect.collect_for_trace_only_scenario(test_conf)
         analyze.analyze_dump(dump_root)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         dump_root = collect.collect_for_dump_only_scenario(test_conf)
         analyze.analyze_dump(dump_root)
 
-        collect.collect_symbols()
+        collect.collect_symbols(test_conf)
 
     elif action == 'clean':
         from actions import clean

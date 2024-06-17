@@ -20,7 +20,7 @@ def build_runtime(test_conf: GenerationAwareAnalyzeConfiguration):
     if 'win' in SysInfo.rid: 
         script_engine = 'cmd.exe'
         command = [script_engine, '/k', test_conf.vcvars64_activation_path]
-        p = run_command_async(
+        _, p = run_command_async(
             command, 
             stdin=PIPE,
             cwd=test_conf.runtime_root
@@ -40,7 +40,7 @@ def build_runtime(test_conf: GenerationAwareAnalyzeConfiguration):
 
         for command in command_list:
             print(f'run command {command}')
-            run_command_sync(
+            command, out, err = run_command_sync(
                 command,
                 stdout=None, stderr=None,
                 cwd=test_conf.runtime_root,
@@ -67,7 +67,7 @@ def build_genawaredemo(test_conf: GenerationAwareAnalyzeConfiguration):
 def run_genawaredemo(test_conf: GenerationAwareAnalyzeConfiguration,
                      output_folder: str,
                      extra_env: os._Environ) -> Union[str, Exception]:
-    corerun_path = dotnet_app.get_corerun_path(test_conf)
+    corerun_path = dotnet_app.get_corerun_path(test_conf.runtime_root)
     if isinstance(corerun_path, Exception):
         return corerun_path
 
@@ -83,7 +83,7 @@ def run_genawaredemo(test_conf: GenerationAwareAnalyzeConfiguration,
     tmp_write = open(tmp_path, 'w+')
     tmp_read = open(tmp_path, 'r')
     
-    p = run_command_async(command, cwd=output_folder, stdin=PIPE, stdout=tmp_write, env=extra_env)
+    _, p = run_command_async(command, cwd=output_folder, stdin=PIPE, stdout=tmp_write, env=extra_env)
     # make sure the app is running before input
     while True:
         if 'My process id is' in tmp_read.read():

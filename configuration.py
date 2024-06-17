@@ -11,8 +11,13 @@ class GenerationAwareAnalyzeConfiguration:
         self.conf_file_path = conf_file_path
 
         runtime_short_commit = self.runtime_commit[:7]
-        self.test_name = f'generation-aware_analyze-runtime-{runtime_short_commit}'
-        self.test_bed = os.path.join(self.testbed_root, f'Testbed-{self.test_name}')
+
+        if os.path.exists(self._testbed):
+            test_name = f'generation-aware_analyze-runtime-{runtime_short_commit}'
+            self.test_bed = os.path.join(self._testbed, f'Testbed-{test_name}')
+        else:
+            self.test_bed = self._testbed
+            
         self.test_result_folder = os.path.join(self.test_bed, f'TestResult')
 
         self.runtime_root = os.path.join(self.test_bed, 'runtime')
@@ -50,7 +55,7 @@ class GenerationAwareAnalyzeConfiguration:
             self.runtime_commit: str = config['Runtime']['commit']
             self.blog_samples_repo: str = config['Blog-Samples']['repo']
             self.blog_samples_commit: str = config['Blog-Samples']['commit']
-            self.testbed_root: str = config['Test']['testbedroot']
+            self._testbed: str = config['Test']['testbed']
             self.vcvars64_activation_path = config['Build']['vcvars64']
             self.perfview_bin = config['Test']['perfview']
 
