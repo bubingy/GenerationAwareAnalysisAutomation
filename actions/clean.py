@@ -51,11 +51,9 @@ def remove_registry_keys(test_conf: GenerationAwareAnalyzeConfiguration):
         0,
         winreg.KEY_ALL_ACCESS
     ) as debug_dll:
-        winreg.DeleteKeyEx(
+        winreg.DeleteValue(
             debug_dll,
-            os.path.join(core_root, 'mscordaccore.dll'),
-            winreg.KEY_ALL_ACCESS,
-            0
+            os.path.join(core_root, 'mscordaccore.dll')
         )
 
     with winreg.OpenKeyEx(
@@ -64,9 +62,7 @@ def remove_registry_keys(test_conf: GenerationAwareAnalyzeConfiguration):
         0,
         winreg.KEY_ALL_ACCESS
     ) as auxiliary_dll:
-        winreg.DeleteKeyEx(
+        winreg.DeleteValue(
             auxiliary_dll,
-            os.path.join(core_root, 'coreclr.dll'),
-            winreg.KEY_ALL_ACCESS,
-            0
+            os.path.join(core_root, 'coreclr.dll')
         )  
