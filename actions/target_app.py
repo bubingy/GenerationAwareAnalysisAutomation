@@ -15,8 +15,6 @@ from tools.terminal import run_command_sync, run_command_async, PIPE
     post_run_msg='------ build runtime completed ------'
 )
 def build_runtime(test_conf: GenerationAwareAnalyzeConfiguration):
-    print('build runtime')
-
     if 'win' in SysInfo.rid: 
         script_engine = 'cmd.exe'
         command = [script_engine, '/k', test_conf.vcvars64_activation_path]
@@ -39,7 +37,6 @@ def build_runtime(test_conf: GenerationAwareAnalyzeConfiguration):
         ]
 
         for command in command_list:
-            print(f'run command {command}')
             command, out, err = run_command_sync(
                 command,
                 stdout=None, stderr=None,

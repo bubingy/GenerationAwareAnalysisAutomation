@@ -54,21 +54,19 @@ def remove_registry_keys(test_conf: GenerationAwareAnalyzeConfiguration):
         winreg.DeleteKeyEx(
             debug_dll,
             os.path.join(core_root, 'mscordaccore.dll'),
-            0,
-            winreg.REG_DWORD,
+            winreg.KEY_ALL_ACCESS,
             0
         )
 
-    with winreg.DeleteKeyEx(
+    with winreg.OpenKeyEx(
         winreg.HKEY_LOCAL_MACHINE, 
         r'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\MiniDumpAuxiliaryDlls',
         0,
-        winreg.KEY_SET_VALUE
+        winreg.KEY_ALL_ACCESS
     ) as auxiliary_dll:
-        winreg.SetValueEx(
+        winreg.DeleteKeyEx(
             auxiliary_dll,
             os.path.join(core_root, 'coreclr.dll'),
-            0,
-            winreg.REG_SZ,
-            os.path.join(core_root, 'mscordaccore.dll')
+            winreg.KEY_ALL_ACCESS,
+            0
         )  
